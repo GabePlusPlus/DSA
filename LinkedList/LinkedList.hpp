@@ -48,7 +48,7 @@ class LinkedList {
 
 // Assumes that NULL can be cast to T
 template <typename T>
-Node<T>::Node(T const value /* = NULL */, Node* const next /* = nullptr */) {
+inline Node<T>::Node(T const value /* = NULL */, Node* const next /* = nullptr */) {
 	this->value = value;
 	this->next = next;
 }
@@ -78,23 +78,19 @@ inline void Node<T>::setNext(Node* const next) {
  */
 
 template <typename T>
-LinkedList<T>::LinkedList() {
+inline LinkedList<T>::LinkedList() {
 	head = tail = nullptr;
 	size = static_cast<size_t>(0);
 }
 
 template <typename T>
-LinkedList<T>::~LinkedList() {
-	if (size == static_cast<size_t>(0)) return;
-	else clear();
+inline LinkedList<T>::~LinkedList() {
+	if (size != static_cast<size_t>(0)) clear();
 }
 
 template <typename T>
 inline bool LinkedList<T>::isFull() const {
-	if (size != std::numeric_limits<size_t>::max())
-		return false;
-	else
-		return true;
+	return size != std::numeric_limits<size_t>::max() ? false : true;
 }
 
 template <typename T>
