@@ -16,9 +16,7 @@ class Node {
 		T value;
 		Node* next;
 	public:
-		// Assumes that NULL can be cast to T
-		Node(T const value = NULL, Node* const next = nullptr);
-
+		Node(T const value = T(), Node* const next = nullptr);
 		T getValue() const;
 		Node* getNext() const;
 		void setValue(T const value);
@@ -46,9 +44,8 @@ class LinkedList {
  * NODE
  */
 
-// Assumes that NULL can be cast to T
 template <typename T>
-inline Node<T>::Node(T const value /* = NULL */, Node* const next /* = nullptr */) {
+inline Node<T>::Node(T const value /* = T() */, Node* const next /* = nullptr */) {
 	this->value = value;
 	this->next = next;
 }
