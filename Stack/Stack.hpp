@@ -14,9 +14,7 @@ class StackItem {
 		T value;
 		StackItem* below;
 	public:
-		// Assumes that NULL can be cast to T
-		StackItem(T const value = NULL, StackItem* const below = nullptr);
-
+		StackItem(T const value = T(), StackItem* const below = nullptr);
 		T getValue() const;
 		StackItem* getBelow() const;
 		void setValue(T const value);
@@ -40,9 +38,8 @@ class Stack {
  * STACKITEM
  */
 
-// Assumes that NULL can be cast to T
 template <typename T>
-inline StackItem<T>::StackItem(T const value /* = NULL */,
+inline StackItem<T>::StackItem(T const value /* = T() */,
 StackItem* const below /* = nullptr */) {
 	this->value = value;
 	this->below = below;
