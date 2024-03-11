@@ -1,7 +1,7 @@
 /*
  * TODO:
- * - Replace raw pointers with smart pointers
- * - Implement a peek function
+ *	- Replace raw pointers with smart pointers
+ *	- Implement a peek function
  */
 
 #pragma once
@@ -10,28 +10,30 @@
 
 template <typename T>
 class StackItem {
-	private:
-		T value;
-		StackItem* below;
-	public:
-		StackItem(T const value = T(), StackItem* const below = nullptr);
-		T getValue() const;
-		StackItem* getBelow() const;
-		void setValue(T const value);
-		void setBelow(StackItem* const below);
+private:
+	T value;
+	StackItem* below;
+
+public:
+	StackItem(T const value = T(), StackItem* const below = nullptr);
+	T getValue() const;
+	StackItem* getBelow() const;
+	void setValue(T const value);
+	void setBelow(StackItem* const below);
 };
 
 template <typename T>
 class Stack {
-	private:
-		StackItem<T>* top;
-	public:
-		Stack();
-		~Stack();
-		void push(T const value);
-		T pop();
-		void clear();
-		bool isEmpty() const;
+private:
+	StackItem<T>* top;
+
+public:
+	Stack();
+	~Stack();
+	void push(T const value);
+	T pop();
+	void clear();
+	bool isEmpty() const;
 };
 
 /*
@@ -40,7 +42,7 @@ class Stack {
 
 template <typename T>
 inline StackItem<T>::StackItem(T const value /* = T() */,
-StackItem* const below /* = nullptr */) {
+	StackItem* const below /* = nullptr */) {
 	this->value = value;
 	this->below = below;
 }
@@ -92,8 +94,7 @@ Stack<T>::~Stack() {
 template <typename T>
 void Stack<T>::push(T const value) {
 	StackItem<T>* const new_item = new StackItem<T>(value);
-	if (!isEmpty())
-		new_item->setBelow(top);
+	if (!isEmpty()) new_item->setBelow(top);
 	top = new_item;
 }
 
