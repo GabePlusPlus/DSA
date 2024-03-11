@@ -6,38 +6,39 @@
 
 #pragma once
 
-#include <limits>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 
 template <typename T>
 class Node {
-	private:
-		T value;
-		Node* next;
-	public:
-		Node(T const value = T(), Node* const next = nullptr);
-		T getValue() const;
-		Node* getNext() const;
-		void setValue(T const value);
-		void setNext(Node* const next);
+private:
+	T value;
+	Node* next;
+
+public:
+	Node(T const value = T(), Node* const next = nullptr);
+	T getValue() const;
+	Node* getNext() const;
+	void setValue(T const value);
+	void setNext(Node* const next);
 };
 
 template <typename T>
 class LinkedList {
-	private:
-		Node<T> *head, *tail;
-		size_t size;
+private:
+	Node<T> *head, *tail;
+	size_t size;
 
-	public:
-		LinkedList();
-		~LinkedList();
-		bool isFull() const;
-		void append(T const value);
-		void insert(T const value, size_t const index);
-		void traverse() const;
-		void _delete(size_t const index);
-		void clear();
+public:
+	LinkedList();
+	~LinkedList();
+	bool isFull() const;
+	void append(T const value);
+	void insert(T const value, size_t const index);
+	void traverse() const;
+	void _delete(size_t const index);
+	void clear();
 };
 
 /*
@@ -45,18 +46,19 @@ class LinkedList {
  */
 
 template <typename T>
-inline Node<T>::Node(T const value /* = T() */, Node* const next /* = nullptr */) {
+inline Node<T>::Node(T const value /* = T() */,
+	Node* const next /* = nullptr */) {
 	this->value = value;
 	this->next = next;
 }
 
 template <typename T>
-inline T Node<T>::getValue() const  {
+inline T Node<T>::getValue() const {
 	return value;
 }
 
 template <typename T>
-inline Node<T>* Node<T>::getNext() const  {
+inline Node<T>* Node<T>::getNext() const {
 	return next;
 }
 
@@ -106,8 +108,7 @@ void LinkedList<T>::append(T const value) {
 
 template <typename T>
 void LinkedList<T>::insert(T const value, size_t const index) {
-	if (isFull())
-		throw std::length_error("insert: linked list is full");
+	if (isFull()) throw std::length_error("insert: linked list is full");
 
 	if (index > size - static_cast<size_t>(1))
 		throw std::out_of_range("insert: index is out of range");
@@ -164,8 +165,7 @@ void LinkedList<T>::_delete(size_t const index) {
 	}
 
 	if (index == size - static_cast<size_t>(1)) {
-		while (temp->getNext() != tail)
-			temp = temp->getNext();
+		while (temp->getNext() != tail) temp = temp->getNext();
 		delete tail;
 		temp->setNext(nullptr);
 		tail = temp;
