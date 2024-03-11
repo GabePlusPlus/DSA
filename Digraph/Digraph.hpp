@@ -94,7 +94,7 @@ public:
             << "Solution: Use existing uid or create new node.";
         exception_message = oss.str();
     }
-    char const* what() const noexcept override {
+    char const * what() const noexcept override {
         return exception_message.c_str();
     }
 };
