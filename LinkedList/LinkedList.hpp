@@ -89,7 +89,7 @@ inline LinkedList<T>::~LinkedList() {
 
 template <typename T>
 inline bool LinkedList<T>::isFull() const {
-    return size != std::numeric_limits<size_t>::max() ? false : true;
+    return size == std::numeric_limits<size_t>::max();
 }
 
 template <typename T>
