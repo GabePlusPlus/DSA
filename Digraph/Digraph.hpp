@@ -20,8 +20,10 @@
 #define INLINE inline
 #endif
 
+#include <cstddef>
 #include <map>
 #include <memory>
+#include <ostream>
 #include <set>
 #include <source_location>
 #include <sstream>
@@ -50,12 +52,12 @@ private:
 public:
     node_uniqueness_violation(T const uid) {
         std::ostringstream oss;
-        oss << "Context: Creating new node.\n"
-            << "Error: Node uid (" << uid << ") already exists.\n"
+        oss << "Context: Creating new node." << std::endl
+            << "Error: Node uid (" << uid << ") already exists." << std::endl
             << "Solution: Use new uid or edit existing node.";
         exception_message = oss.str();
     }
-    char const* what() const noexcept override {
+    char const * what() const noexcept override {
         return exception_message.c_str();
     }
 };
@@ -77,8 +79,8 @@ public:
     void addArc(T const from_uid, T const to_uid);
     void deleteArc(T const from_uid, T const to_uid);
     bool checkArc(T const from_uid, T const to_uid) const;
-    size_t outDegree(T const uid);
-    size_t inDegree(T const uid);
+    std::size_t outDegree(T const uid);
+    std::size_t inDegree(T const uid);
 };
 
 template <typename T>
@@ -89,12 +91,13 @@ private:
 public:
     node_not_found(std::string const caller, T const uid) {
         std::ostringstream oss;
-        oss << "Context: Manipulating node via " << caller << ".\n"
-            << "Error: Node with desired uid (" << uid << ") not found.\n"
+        oss << "Context: Manipulating node via " << caller << "." << std::endl
+            << "Error: Node with desired uid (" << uid << ") not found."
+            << std::endl
             << "Solution: Use existing uid or create new node.";
         exception_message = oss.str();
     }
-    char const* what() const noexcept override {
+    char const * what() const noexcept override {
         return exception_message.c_str();
     }
 };
@@ -148,13 +151,13 @@ inline bool Digraph<T>::checkArc(T const from_uid, T const to_uid) const {
 }
 
 template <typename T>
-inline size_t Digraph<T>::outDegree(T const uid) {
+inline std::size_t Digraph<T>::outDegree(T const uid) {
     auto const itr = getNode(uid, FUNC_NAME);
     return itr->second->out.size();
 }
 
 template <typename T>
-inline size_t Digraph<T>::inDegree(T const uid) {
+inline std::size_t Digraph<T>::inDegree(T const uid) {
     auto const itr = getNode(uid, FUNC_NAME);
     return itr->second->in.size();
 }
