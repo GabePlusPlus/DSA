@@ -77,10 +77,8 @@ inline void Node<T>::setNext(Node* const next) {
  */
 
 template <typename T>
-inline LinkedList<T>::LinkedList() {
-    head = tail = nullptr;
-    size = static_cast<size_t>(0);
-}
+inline LinkedList<T>::LinkedList() :
+head(nullptr), tail(nullptr), size(0) {}
 
 template <typename T>
 inline LinkedList<T>::~LinkedList() {
@@ -127,8 +125,7 @@ void LinkedList<T>::insert(T const value, size_t const index) {
     }
 
     Node<T>* temp = head;
-    for (size_t i = static_cast<size_t>(0);
-        i < index - static_cast<size_t>(1); i++) {
+    for (size_t i = 0; i < index - static_cast<size_t>(1); i++) {
         temp = temp->getNext();
     }
     Node<T>* new_node = new Node<T>(value, temp->getNext());
@@ -173,8 +170,7 @@ void LinkedList<T>::_delete(size_t const index) {
         return;
     }
 
-    for (size_t i = static_cast<size_t>(0);
-        i < index - static_cast<size_t>(1); i++) {
+    for (size_t i = 0; i < index - static_cast<size_t>(1); i++) {
         temp = temp->getNext();
     }
 
@@ -193,5 +189,5 @@ void LinkedList<T>::clear() {
         temp = head;
     }
     tail = head; // == nullptr
-    size = static_cast<size_t>(0);
+    size = 0;
 }
