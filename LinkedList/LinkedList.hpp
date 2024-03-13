@@ -1,55 +1,58 @@
 /*
- * TODO:
- *    - Replace raw pointers with smart pointers
- *    - Overload the bracket operator (`[]`) for LinkedList
- */
+* TODO:
+*   - Perform unit testing
+*   - Overload the bracket operator (`[]`) for LinkedList
+*/
 
 #pragma once
 
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <stdexcept>
+#include <utility>
 
 template <typename T>
 class Node {
 private:
     T value;
-    Node* next;
+    std::shared_ptr<Node> next;
 
 public:
-    Node(T const value = T(), Node* const next = nullptr);
+    Node(T const value = T(), std::shared_ptr<Node>&& const next = nullptr);
+    void setNext(std::shared_ptr<Node>&& const next);
     T getValue() const;
-    Node* getNext() const;
-    void setValue(T const value);
-    void setNext(Node* const next);
+    std::shared_ptr<Node> getNext() const;
 };
 
 template <typename T>
 class LinkedList {
 private:
-    Node<T> *head, *tail;
-    size_t size;
+    std::shared_ptr<Node<T>> head, tail;
+    std::size_t size;
 
 public:
     LinkedList();
-    ~LinkedList();
     bool isFull() const;
     void append(T const value);
-    void insert(T const value, size_t const index);
+    void insert(T const value, std::size_t const index);
     void traverse() const;
-    void _delete(size_t const index);
-    void clear();
+    void remove(std::size_t const index);
 };
 
 /*
- * NODE
- */
+* NODE
+*/
 
 template <typename T>
-inline Node<T>::Node(T const value /* = T() */,
-    Node* const next /* = nullptr */) {
+inline Node<T>::Node(T const value, std::shared_ptr<Node>&& const next) {
     this->value = value;
-    this->next = next;
+    this->next = std::move(next);
+}
+
+template <typename T>
+void Node<T>::setNext(std::shared_ptr<Node<T>>&& const next) {
+    this->next = std::move(next);
 }
 
 template <typename T>
@@ -58,48 +61,32 @@ inline T Node<T>::getValue() const {
 }
 
 template <typename T>
-inline Node<T>* Node<T>::getNext() const {
+inline std::shared_ptr<Node<T>> Node<T>::getNext() const {
     return next;
 }
 
-template <typename T>
-inline void Node<T>::setValue(T const value) {
-    this->value = value;
-}
-
-template <typename T>
-inline void Node<T>::setNext(Node* const next) {
-    this->next = next;
-}
-
 /*
- * LINKED LIST
- */
+* LINKED LIST
+*/
 
 template <typename T>
-inline LinkedList<T>::LinkedList() :
-head(nullptr), tail(nullptr), size(0) {}
-
-template <typename T>
-inline LinkedList<T>::~LinkedList() {
-    if (size != static_cast<size_t>(0)) clear();
-}
+inline LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
 template <typename T>
 inline bool LinkedList<T>::isFull() const {
-    return size == std::numeric_limits<size_t>::max();
+    return size == std::numeric_limits<std::size_t>::max();
 }
 
 template <typename T>
 void LinkedList<T>::append(T const value) {
-    if (size == static_cast<size_t>(0)) {
-        head = tail = new Node<T>(value);
+    if (size == static_cast<std::size_t>(0)) {
+        tail = head = std::make_shared<Node<T>>(value);
         size++;
     } else if (isFull()) {
         throw std::length_error("append: linked list is full");
     } else {
-        tail->setNext(new Node<T>(value));
-        tail = tail->getNext();
+        tail->setNext(std::make_shared<Node<T>>(value));
+        tail = std::move(tail->getNext());
         size++;
     }
 }
@@ -108,86 +95,65 @@ template <typename T>
 void LinkedList<T>::insert(T const value, size_t const index) {
     if (isFull()) throw std::length_error("insert: linked list is full");
 
-    if (index > size - static_cast<size_t>(1))
-        throw std::out_of_range("insert: index is out of range");
+    if (index > size) throw std::out_of_range("insert: index is out of range");
 
     if (index == static_cast<size_t>(0)) {
-        Node<T>* new_node = new Node<T>(value, head);
-        head = new_node;
+        // Prepend
+        head =
+            std::make_shared<Node<T>>(value, std::make_shared<Node<T>>(*head));
         size++;
         return;
     }
 
     if (index == size) {
         append(value);
-        size++;
         return;
     }
 
-    Node<T>* temp = head;
-    for (size_t i = 0; i < index - static_cast<size_t>(1); i++) {
+    std::shared_ptr<Node<T>> temp = head;
+    for (size_t i = 0; i < index - static_cast<size_t>(1); i++)
         temp = temp->getNext();
-    }
-    Node<T>* new_node = new Node<T>(value, temp->getNext());
-    temp->setNext(new_node);
+    temp->setNext(std::make_shared<Node<T>>(value, temp->getNext()));
     size++;
 }
 
 template <typename T>
 void LinkedList<T>::traverse() const {
     if (size == static_cast<size_t>(0)) {
-        std::cout << "(Empty)" << std::endl;
+        std::cout << "(Empty)\n";
         return;
     }
 
-    Node<T>* temp = head;
-    while (temp != nullptr) {
-        std::cout << temp->getValue() << std::endl;
+    std::shared_ptr<Node<T>> temp = head;
+    while (temp) {
+        std::cout << temp->getValue() << '\n';
         temp = temp->getNext();
     }
 }
 
 template <typename T>
-void LinkedList<T>::_delete(size_t const index) {
-    if (index > size - static_cast<size_t>(1))
-        throw std::out_of_range("_delete: index is out of range");
+void LinkedList<T>::remove(size_t const index) {
+    if (index >= size) throw std::out_of_range("remove: index is out of range");
 
-    Node<T>* temp = head;
+    std::shared_ptr<Node<T>> temp = head;
 
     if (index == static_cast<size_t>(0)) {
-        head = temp->getNext();
-        delete temp;
+        head = std::move(temp->getNext());
         size--;
         return;
     }
 
     if (index == size - static_cast<size_t>(1)) {
         while (temp->getNext() != tail) temp = temp->getNext();
-        delete tail;
         temp->setNext(nullptr);
         tail = temp;
         size--;
         return;
     }
 
-    for (size_t i = 0; i < index - static_cast<size_t>(1); i++) {
+    for (size_t i = 0; i < index - static_cast<size_t>(1); i++)
         temp = temp->getNext();
-    }
 
-    Node<T>* to_delete = temp->getNext();
-    temp->setNext(to_delete->getNext());
-    delete to_delete;
+    temp->setNext(std::move(temp->getNext()->getNext()));
     size--;
-}
-
-template <typename T>
-void LinkedList<T>::clear() {
-    Node<T>* temp = head;
-    while (head != nullptr) {
-        head = head->getNext();
-        delete temp;
-        temp = head;
-    }
-    tail = head; // == nullptr
-    size = 0;
 }
