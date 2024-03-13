@@ -92,12 +92,12 @@ void LinkedList<T>::append(T const value) {
 }
 
 template <typename T>
-void LinkedList<T>::insert(T const value, size_t const index) {
+void LinkedList<T>::insert(T const value, std::size_t const index) {
     if (isFull()) throw std::length_error("insert: linked list is full");
 
     if (index > size) throw std::out_of_range("insert: index is out of range");
 
-    if (index == static_cast<size_t>(0)) {
+    if (index == static_cast<std::size_t>(0)) {
         // Prepend
         head =
             std::make_shared<Node<T>>(value, std::make_shared<Node<T>>(*head));
@@ -111,7 +111,7 @@ void LinkedList<T>::insert(T const value, size_t const index) {
     }
 
     std::shared_ptr<Node<T>> temp = head;
-    for (size_t i = 0; i < index - static_cast<size_t>(1); i++)
+    for (std::size_t i = 0; i < index - static_cast<std::size_t>(1); i++)
         temp = temp->getNext();
     temp->setNext(std::make_shared<Node<T>>(value, temp->getNext()));
     size++;
@@ -119,7 +119,7 @@ void LinkedList<T>::insert(T const value, size_t const index) {
 
 template <typename T>
 void LinkedList<T>::traverse() const {
-    if (size == static_cast<size_t>(0)) {
+    if (size == static_cast<std::size_t>(0)) {
         std::cout << "(Empty)\n";
         return;
     }
@@ -132,18 +132,18 @@ void LinkedList<T>::traverse() const {
 }
 
 template <typename T>
-void LinkedList<T>::remove(size_t const index) {
+void LinkedList<T>::remove(std::size_t const index) {
     if (index >= size) throw std::out_of_range("remove: index is out of range");
 
     std::shared_ptr<Node<T>> temp = head;
 
-    if (index == static_cast<size_t>(0)) {
+    if (index == static_cast<std::size_t>(0)) {
         head = std::move(temp->getNext());
         size--;
         return;
     }
 
-    if (index == size - static_cast<size_t>(1)) {
+    if (index == size - static_cast<std::size_t>(1)) {
         while (temp->getNext() != tail) temp = temp->getNext();
         temp->setNext(nullptr);
         tail = temp;
@@ -151,7 +151,7 @@ void LinkedList<T>::remove(size_t const index) {
         return;
     }
 
-    for (size_t i = 0; i < index - static_cast<size_t>(1); i++)
+    for (std::size_t i = 0; i < index - static_cast<std::size_t>(1); i++)
         temp = temp->getNext();
 
     temp->setNext(std::move(temp->getNext()->getNext()));
