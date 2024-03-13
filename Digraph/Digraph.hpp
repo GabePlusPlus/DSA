@@ -52,8 +52,8 @@ private:
 public:
     node_uniqueness_violation(T const uid) {
         std::ostringstream oss;
-        oss << "Context: Creating new node." << std::endl
-            << "Error: Node uid (" << uid << ") already exists." << std::endl
+        oss << "Context: Creating new node.\n"
+            << "Error: Node uid (" << uid << ") already exists.\n"
             << "Solution: Use new uid or edit existing node.";
         exception_message = oss.str();
     }
@@ -91,9 +91,8 @@ private:
 public:
     node_not_found(std::string const caller, T const uid) {
         std::ostringstream oss;
-        oss << "Context: Manipulating node via " << caller << "." << std::endl
-            << "Error: Node with desired uid (" << uid << ") not found."
-            << std::endl
+        oss << "Context: Manipulating node via " << caller << ".\n"
+            << "Error: Node with desired uid (" << uid << ") not found.\n"
             << "Solution: Use existing uid or create new node.";
         exception_message = oss.str();
     }
