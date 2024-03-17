@@ -14,12 +14,6 @@
 
 #pragma once
 
-#ifdef _MSC_VER
-#define INLINE __forceinline
-#else
-#define INLINE inline
-#endif
-
 #include <cstddef>
 #include <functional>
 #include <map>
@@ -109,7 +103,12 @@ public:
 };
 
 template <typename T>
-INLINE std::map<T, std::unique_ptr<Node<T>>>::iterator Digraph<T>::getNode(
+#ifdef _MSC_VER
+__forceinline
+#else
+inline
+#endif
+std::map<T, std::unique_ptr<Node<T>>>::iterator Digraph<T>::getNode(
     T const uid, std::string caller) {
     auto const itr = nodes.find(uid);
     if (itr == nodes.end()) throw node_not_found(caller, uid);
