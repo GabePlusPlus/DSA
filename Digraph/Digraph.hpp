@@ -15,10 +15,8 @@
 #pragma once
 
 #include <cstddef>
-#include <functional>
 #include <map>
 #include <memory>
-#include <ostream>
 #include <source_location>
 #include <sstream>
 #include <stdexcept>
