@@ -7,9 +7,9 @@
  *                                                                            |___/
  *
  * TODO:
- *    - Implement search algorithms
- *    - Implement traversal algorithms
- *    - Document
+ *  - Implement DFS
+ *  - Perform unit testing
+ *  - Document
  */
 
 #pragma once
@@ -21,21 +21,24 @@
 #endif
 
 #include <cstddef>
+#include <functional>
 #include <map>
 #include <memory>
 #include <ostream>
-#include <set>
 #include <source_location>
 #include <sstream>
 #include <stdexcept>
+#include <unordered_set>
+#include <vector>
+
 #define FUNC_NAME std::string(std::source_location::current().function_name())
 
 template <typename T>
 class Node {
 private:
     T uid;
-    std::set<T> in;
-    std::set<T> out;
+    std::unordered_set<T> in;
+    std::unordered_set<T> out;
 
     template <typename T>
     friend class Digraph;
@@ -81,6 +84,10 @@ public:
     bool checkArc(T const from_uid, T const to_uid) const;
     std::size_t outDegree(T const uid);
     std::size_t inDegree(T const uid);
+    void bfSearch(T const root_uid, std::vector<T> &vec);
+
+    // Not yet implemented
+    void dfSearch(T const root_uid, std::vector<T> &vec);
 };
 
 template <typename T>
@@ -159,4 +166,21 @@ template <typename T>
 inline std::size_t Digraph<T>::inDegree(T const uid) {
     auto const itr = getNode(uid, FUNC_NAME);
     return itr->second->in.size();
+}
+
+template <typename T>
+void Digraph<T>::bfSearch(T const root_uid, std::vector<T> &vec) {
+    std::unordered_set<T> visited;
+    vec.push_back(root_uid);
+    visited.insert(root_uid);
+    for (std::size_t index = 0; index != vec.size(); index++) {
+        auto curr_uid = *(vec.begin() + index);
+        auto curr_node = getNode(curr_uid, FUNC_NAME);
+        for (auto out_neighbour : curr_node->second->out) {
+            if (visited.find(out_neighbour) == visited.end()) {
+                vec.push_back(out_neighbour);
+                visited.insert(out_neighbour);
+            }
+        }
+    }
 }
