@@ -7,9 +7,9 @@
  *                                                                            |___/
  *
  * TODO:
- *  - Implement DFS
- *  - Perform unit testing
- *  - Document
+ *    - Implement search algorithms
+ *    - Implement traversal algorithms
+ *    - Document
  */
 
 #pragma once
@@ -21,24 +21,21 @@
 #endif
 
 #include <cstddef>
-#include <functional>
 #include <map>
 #include <memory>
 #include <ostream>
+#include <set>
 #include <source_location>
 #include <sstream>
 #include <stdexcept>
-#include <unordered_set>
-#include <vector>
-
 #define FUNC_NAME std::string(std::source_location::current().function_name())
 
 template <typename T>
 class Node {
 private:
     T uid;
-    std::unordered_set<T> in;
-    std::unordered_set<T> out;
+    std::set<T> in;
+    std::set<T> out;
 
     template <typename T>
     friend class Digraph;
@@ -55,8 +52,8 @@ private:
 public:
     node_uniqueness_violation(T const uid) {
         std::ostringstream oss;
-        oss << "Context: Creating new node." << std::endl
-            << "Error: Node uid (" << uid << ") already exists." << std::endl
+        oss << "Context: Creating new node.\n"
+            << "Error: Node uid (" << uid << ") already exists.\n"
             << "Solution: Use new uid or edit existing node.";
         exception_message = oss.str();
     }
@@ -84,10 +81,6 @@ public:
     bool checkArc(T const from_uid, T const to_uid) const;
     std::size_t outDegree(T const uid);
     std::size_t inDegree(T const uid);
-    void bfSearch(T const root_uid, std::vector<T> &vec);
-
-    // Not yet implemented
-    void dfSearch(T const root_uid, std::vector<T> &vec);
 };
 
 template <typename T>
@@ -98,9 +91,8 @@ private:
 public:
     node_not_found(std::string const caller, T const uid) {
         std::ostringstream oss;
-        oss << "Context: Manipulating node via " << caller << "." << std::endl
-            << "Error: Node with desired uid (" << uid << ") not found."
-            << std::endl
+        oss << "Context: Manipulating node via " << caller << ".\n"
+            << "Error: Node with desired uid (" << uid << ") not found.\n"
             << "Solution: Use existing uid or create new node.";
         exception_message = oss.str();
     }
@@ -167,21 +159,4 @@ template <typename T>
 inline std::size_t Digraph<T>::inDegree(T const uid) {
     auto const itr = getNode(uid, FUNC_NAME);
     return itr->second->in.size();
-}
-
-template <typename T>
-void Digraph<T>::bfSearch(T const root_uid, std::vector<T> &vec) {
-    std::unordered_set<T> visited;
-    vec.push_back(root_uid);
-    visited.insert(root_uid);
-    for (std::size_t index = 0; index != vec.size(); index++) {
-        auto curr_uid = *(vec.begin() + index);
-        auto curr_node = getNode(curr_uid, FUNC_NAME);
-        for (auto out_neighbour : curr_node->second->out) {
-            if (visited.find(out_neighbour) == visited.end()) {
-                vec.push_back(out_neighbour);
-                visited.insert(out_neighbour);
-            }
-        }
-    }
 }
