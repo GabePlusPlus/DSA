@@ -1,20 +1,12 @@
 /*
- * __        __                 _        _             ____
- * \ \      / /   ___    _ __  | | __   (_)  _ __     |  _ \   _ __    ___     __ _   _ __    ___   ___   ___
- *  \ \ /\ / /   / _ \  | '__| | |/ /   | | | '_ \    | |_) | | '__|  / _ \   / _` | | '__|  / _ \ / __| / __|
- *   \ V  V /   | (_) | | |    |   <    | | | | | |   |  __/  | |    | (_) | | (_| | | |    |  __/ \__ \ \__ \
- *    \_/\_/     \___/  |_|    |_|\_\   |_| |_| |_|   |_|     |_|     \___/   \__, | |_|     \___| |___/ |___/
- *                                                                            |___/
- *
- * TODO:
- *  - Implement DFS
- *  - Perform unit testing
- *  - Document
- */
+* TODO:
+*  - Document
+*/
 
 #pragma once
 
 #include <cstddef>
+#include <functional>
 #include <map>
 #include <memory>
 #include <source_location>
@@ -77,8 +69,6 @@ public:
     std::size_t outDegree(T const uid);
     std::size_t inDegree(T const uid);
     void bfSearch(T const root_uid, std::vector<T> &vec);
-
-    // Not yet implemented
     void dfSearch(T const root_uid, std::vector<T> &vec);
 };
 
@@ -180,4 +170,18 @@ void Digraph<T>::bfSearch(T const root_uid, std::vector<T> &vec) {
             }
         }
     }
+}
+
+template <typename T>
+void Digraph<T>::dfSearch(T const root_uid, std::vector<T> &vec) {
+    std::unordered_set<T> traversed;
+    std::function<void(T)> dfs = [&](T curr_uid) {
+        traversed.insert(curr_uid);
+        auto curr_node = getNode(curr_uid, FUNC_NAME);
+        for (auto out_neighbour : curr_node->second->out)
+            if (traversed.find(out_neighbour) == traversed.end())
+                dfs(out_neighbour);
+        vec.push_back(curr_uid);
+    };
+    dfs(root_uid);
 }
