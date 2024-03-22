@@ -57,7 +57,7 @@ private:
     std::map<T, std::unique_ptr<Node<T>>> nodes;
 
     std::map<T, std::unique_ptr<Node<T>>>::iterator getNode(T const uid,
-        std::string caller);
+        std::string const caller);
 
 public:
     Digraph() = default;
@@ -68,8 +68,8 @@ public:
     bool checkArc(T const from_uid, T const to_uid) const;
     std::size_t outDegree(T const uid);
     std::size_t inDegree(T const uid);
-    void bfSearch(T const root_uid, std::vector<T> &vec);
-    void dfSearch(T const root_uid, std::vector<T> &vec);
+    void bfSearch(T const root_uid, std::vector<T>& const vec);
+    void dfSearch(T const root_uid, std::vector<T>& const vec);
 };
 
 template <typename T>
@@ -97,7 +97,7 @@ __forceinline
 inline
 #endif
 std::map<T, std::unique_ptr<Node<T>>>::iterator Digraph<T>::getNode(
-    T const uid, std::string caller) {
+    T const uid, std::string const caller) {
     auto const itr = nodes.find(uid);
     if (itr == nodes.end()) throw node_not_found(caller, uid);
     return itr;
@@ -156,7 +156,7 @@ inline std::size_t Digraph<T>::inDegree(T const uid) {
 }
 
 template <typename T>
-void Digraph<T>::bfSearch(T const root_uid, std::vector<T> &vec) {
+void Digraph<T>::bfSearch(T const root_uid, std::vector<T>& const vec) {
     std::unordered_set<T> visited;
     vec.push_back(root_uid);
     visited.insert(root_uid);
@@ -173,9 +173,9 @@ void Digraph<T>::bfSearch(T const root_uid, std::vector<T> &vec) {
 }
 
 template <typename T>
-void Digraph<T>::dfSearch(T const root_uid, std::vector<T> &vec) {
+void Digraph<T>::dfSearch(T const root_uid, std::vector<T>& const vec) {
     std::unordered_set<T> traversed;
-    std::function<void(T)> dfs = [&](T curr_uid) {
+    std::function<void(T)> dfs = [&](T const curr_uid) {
         traversed.insert(curr_uid);
         auto curr_node = getNode(curr_uid, FUNC_NAME);
         for (auto out_neighbour : curr_node->second->out)
