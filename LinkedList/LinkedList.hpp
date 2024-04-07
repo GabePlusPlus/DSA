@@ -1,8 +1,12 @@
 /*
-* TODO:
-*   - Perform unit testing
-*   - Overload the bracket operator (`[]`) for LinkedList
-*/
+ * A simple linked list implementation.
+ * Assumes that the type T used with LinkedList
+ * has an ostream overload (see LinkedList<T>::traverse).
+ *
+ * Represents my first exposure to move semantics;
+ * possible updates to come for more appropriate
+ * use of std::move.
+ */
 
 #pragma once
 
@@ -38,6 +42,7 @@ public:
     void insert(T const value, std::size_t const index);
     void traverse() const;
     void remove(std::size_t const index);
+    T operator[](std::size_t index);
 };
 
 /*
@@ -79,7 +84,7 @@ inline bool LinkedList<T>::isFull() const {
 
 template <typename T>
 void LinkedList<T>::append(T const value) {
-    if (size == static_cast<std::size_t>(0)) {
+    if (size == 0) {
         tail = head = std::make_shared<Node<T>>(value);
         size++;
     } else if (isFull()) {
@@ -97,21 +102,16 @@ void LinkedList<T>::insert(T const value, std::size_t const index) {
 
     if (index > size) throw std::out_of_range("insert: index is out of range");
 
-    if (index == static_cast<std::size_t>(0)) {
-        // Prepend
+    if (index == 0) {
+        // prepend
         head =
             std::make_shared<Node<T>>(value, std::make_shared<Node<T>>(*head));
         size++;
         return;
     }
 
-    if (index == size) {
-        append(value);
-        return;
-    }
-
     std::shared_ptr<Node<T>> temp = head;
-    for (std::size_t i = 0; i < index - static_cast<std::size_t>(1); i++)
+    for (std::size_t i = 0; i < index - 1; i++)
         temp = temp->getNext();
     temp->setNext(std::make_shared<Node<T>>(value, temp->getNext()));
     size++;
@@ -119,7 +119,7 @@ void LinkedList<T>::insert(T const value, std::size_t const index) {
 
 template <typename T>
 void LinkedList<T>::traverse() const {
-    if (size == static_cast<std::size_t>(0)) {
+    if (size == 0) {
         std::cout << "(Empty)\n";
         return;
     }
@@ -137,13 +137,13 @@ void LinkedList<T>::remove(std::size_t const index) {
 
     std::shared_ptr<Node<T>> temp = head;
 
-    if (index == static_cast<std::size_t>(0)) {
+    if (index == 0) {
         head = std::move(temp->getNext());
         size--;
         return;
     }
 
-    if (index == size - static_cast<std::size_t>(1)) {
+    if (index == size - 1) {
         while (temp->getNext() != tail) temp = temp->getNext();
         temp->setNext(nullptr);
         tail = temp;
@@ -151,9 +151,19 @@ void LinkedList<T>::remove(std::size_t const index) {
         return;
     }
 
-    for (std::size_t i = 0; i < index - static_cast<std::size_t>(1); i++)
+    for (std::size_t i = 0; i < index - 1; i++)
         temp = temp->getNext();
 
     temp->setNext(std::move(temp->getNext()->getNext()));
     size--;
+}
+
+template <typename T>
+inline T LinkedList<T>::operator[](std::size_t index) {
+    if (index >= size)
+        throw std::out_of_range("operator[]: index is out of range");
+    std::shared_ptr<Node<T>> temp = head;
+    for (std::size_t i = 0; i < index; i++)
+        temp = temp->getNext();
+    return temp->getValue();
 }
