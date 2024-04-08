@@ -2,10 +2,6 @@
  * A simple linked list implementation.
  * Assumes that the type T used with LinkedList
  * has an ostream overload (see LinkedList<T>::traverse).
- *
- * Represents my first exposure to move semantics;
- * possible updates to come for more appropriate
- * use of std::move.
  */
 
 #pragma once
@@ -154,7 +150,8 @@ void LinkedList<T>::remove(std::size_t const index) {
     for (std::size_t i = 0; i < index - 1; i++)
         temp = temp->getNext();
 
-    temp->setNext(std::move(temp->getNext()->getNext()));
+    auto to_remove = temp->getNext();
+    temp->setNext(std::move(to_remove->getNext()));
     size--;
 }
 
