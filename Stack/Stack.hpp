@@ -1,6 +1,5 @@
 /*
- * TODO:
- *  - Implement peek method
+ * A simple, lightweight stack implementation.
  */
 
 #pragma once
@@ -28,9 +27,10 @@ private:
     std::unique_ptr<StackItem<T>> top;
 
 public:
-    Stack();
+    Stack() : top(nullptr) {}
     void push(T const value);
     T pop();
+    T peek() const;
     bool isEmpty() const;
 };
 
@@ -53,6 +53,8 @@ inline T StackItem<T>::getValue() const {
 
 template <typename T>
 inline std::unique_ptr<StackItem<T>> StackItem<T>::getBelow() {
+    // Stack<T>::pop > this->getBelow > ownership transfer
+    // from this->below to Stack<T>::top via std::move
     return std::move(below);
 }
 
@@ -61,22 +63,12 @@ inline std::unique_ptr<StackItem<T>> StackItem<T>::getBelow() {
 */
 
 template <typename T>
-Stack<T>::Stack() : top(nullptr) {}
-
-#ifdef _MSC_VER
-template <typename T>
-__forceinline bool Stack<T>::isEmpty() const {
-    return !top;
-}
-#else
-template <typename T>
 inline bool Stack<T>::isEmpty() const {
     return !top;
 }
-#endif
 
 template <typename T>
-void Stack<T>::push(T const value) {
+inline void Stack<T>::push(T const value) {
     if (!isEmpty())
         top = std::make_unique<StackItem<T>>(value, std::move(top));
     else
@@ -84,7 +76,7 @@ void Stack<T>::push(T const value) {
 }
 
 template <typename T>
-T Stack<T>::pop() {
+inline T Stack<T>::pop() {
     if (!isEmpty()) {
         T const ret = top->getValue();
         top = top->getBelow();
@@ -92,4 +84,10 @@ T Stack<T>::pop() {
     } else {
         throw std::out_of_range("pop: stack is empty");
     }
+}
+
+template <typename T>
+inline T Stack<T>::peek() const {
+    if (!isEmpty()) return top->getValue();
+    else throw std::out_of_range("peek: stack is empty");
 }
